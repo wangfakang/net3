@@ -1,0 +1,172 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Net3 by wangfakang</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Net3</h1>
+        <p class="header"> http2 simple analysis</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/wangfakang/net3/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/wangfakang/net3/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/wangfakang/net3">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/wangfakang">wangfakang</a></p>
+
+
+      </header>
+      <section>
+        <p><code>http2的简单解析:</code></p>
+
+<p>http2相对于http1.1的性能上提升了不少,http2使用了链路复用技术.减少了tcp握手的时间消耗.其和spdy的思路差不多,
+但是其http的head的压缩算法<a href="https://imququ.com/post/header-compression-in-http2.html">HPACK</a>和spdy是不相同的.</p>
+
+<h1>
+<a id="http2抓包测试说明-----" class="anchor" href="#http2%E6%8A%93%E5%8C%85%E6%B5%8B%E8%AF%95%E8%AF%B4%E6%98%8E-----" aria-hidden="true"><span class="octicon octicon-link"></span></a>http2抓包测试说明:     </h1>
+
+<p>数据1-1是在服务器端(h2o)抓取了客户端(okhttp)发了两次http2的请求报文,从报 文中看出两个请求而只进行一次三次
+握手[即只有两个 SYN报文],充分说明了http2的链路复用的特性.</p>
+
+<h1>
+<a id="http1抓包测试说明----" class="anchor" href="#http1%E6%8A%93%E5%8C%85%E6%B5%8B%E8%AF%95%E8%AF%B4%E6%98%8E----" aria-hidden="true"><span class="octicon octicon-link"></span></a>http1抓包测试说明:    </h1>
+
+<p>数据1-2是在服务器端(h2o)抓取了客户端(okhttp)发了两次http1的请求报文,从报 文中看出两个请求进行了二次三次握
+手[即有四个SYN 报文],即一个请求一个连接. </p>
+
+<h1>
+<a id="http2测试抓包数据" class="anchor" href="#http2%E6%B5%8B%E8%AF%95%E6%8A%93%E5%8C%85%E6%95%B0%E6%8D%AE" aria-hidden="true"><span class="octicon octicon-link"></span></a>http2测试抓包数据:</h1>
+
+<pre><code>                                                           抓包数据[1-1]
+</code></pre>
+
+<div class="highlight highlight-source-c"><pre><span class="pl-c1">12</span>:<span class="pl-c1">16</span>:<span class="pl-c1">15.731512</span> IP <span class="pl-c1">61.135.152.203.43354</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [S], seq <span class="pl-c1">913852984</span>, win <span class="pl-c1">29200</span>, options [mss <span class="pl-c1">1460</span>,sackOK,TS val <span class="pl-c1">2825940</span> ecr <span class="pl-c1">0</span>,nop,wscale <span class="pl-c1">7</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">12</span>:<span class="pl-c1">16</span>:<span class="pl-c1">15.731557</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.43354</span>: Flags [S.], seq <span class="pl-c1">3728669520</span>, ack <span class="pl-c1">913852985</span>, win <span class="pl-c1">14480</span>, options [mss <span class="pl-c1">1460</span>,sackOK,TS val <span class="pl-c1">838041805</span> ecr <span class="pl-c1">2825940</span>,nop,wscale <span class="pl-c1">6</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">12</span>:<span class="pl-c1">16</span>:<span class="pl-c1">15.773710</span> IP <span class="pl-c1">61.135.152.203.43354</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [.], ack <span class="pl-c1">1</span>, win <span class="pl-c1">229</span>, options [nop,nop,TS val <span class="pl-c1">2825945</span> ecr <span class="pl-c1">838041805</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">12</span>:<span class="pl-c1">16</span>:<span class="pl-c1">15.775232</span> IP <span class="pl-c1">61.135.152.203.43354</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [P.], seq <span class="pl-c1">1</span>:<span class="pl-c1">518</span>, ack <span class="pl-c1">1</span>, win <span class="pl-c1">229</span>, options [nop,nop,TS val <span class="pl-c1">2825946</span> ecr <span class="pl-c1">838041805</span>], length <span class="pl-c1">517</span>
+<span class="pl-c1">12</span>:<span class="pl-c1">16</span>:<span class="pl-c1">15.775258</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.43354</span>: Flags [.], ack <span class="pl-c1">518</span>, win <span class="pl-c1">243</span>, options [nop,nop,TS val <span class="pl-c1">838041849</span> ecr <span class="pl-c1">2825946</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">12</span>:<span class="pl-c1">16</span>:<span class="pl-c1">15.775532</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.43354</span>: Flags [P.], seq <span class="pl-c1">1</span>:<span class="pl-c1">147</span>, ack <span class="pl-c1">518</span>, win <span class="pl-c1">243</span>, options [nop,nop,TS val <span class="pl-c1">838041849</span> ecr <span class="pl-c1">2825946</span>], length <span class="pl-c1">146</span>
+<span class="pl-c1">12</span>:<span class="pl-c1">16</span>:<span class="pl-c1">15.791152</span> IP <span class="pl-c1">61.135.152.203.43354</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [.], ack <span class="pl-c1">147</span>, win <span class="pl-c1">237</span>, options [nop,nop,TS val <span class="pl-c1">2825958</span> ecr <span class="pl-c1">838041849</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">12</span>:<span class="pl-c1">16</span>:<span class="pl-c1">15.791161</span> IP <span class="pl-c1">61.135.152.203.43354</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [P.], seq <span class="pl-c1">518</span>:<span class="pl-c1">569</span>, ack <span class="pl-c1">147</span>, win <span class="pl-c1">237</span>, options [nop,nop,TS val <span class="pl-c1">2825958</span> ecr <span class="pl-c1">838041849</span>], length <span class="pl-c1">51</span>
+<span class="pl-c1">12</span>:<span class="pl-c1">16</span>:<span class="pl-c1">15.831030</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.43354</span>: Flags [.], ack <span class="pl-c1">569</span>, win <span class="pl-c1">243</span>, options [nop,nop,TS val <span class="pl-c1">838041905</span> ecr <span class="pl-c1">2825958</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">12</span>:<span class="pl-c1">16</span>:<span class="pl-c1">15.850694</span> IP <span class="pl-c1">61.135.152.203.43354</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [P.], seq <span class="pl-c1">569</span>:<span class="pl-c1">815</span>, ack <span class="pl-c1">147</span>, win <span class="pl-c1">237</span>, options [nop,nop,TS val <span class="pl-c1">2825976</span> ecr <span class="pl-c1">838041905</span>], length <span class="pl-c1">246</span>
+<span class="pl-c1">12</span>:<span class="pl-c1">16</span>:<span class="pl-c1">15.850707</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.43354</span>: Flags [.], ack <span class="pl-c1">815</span>, win <span class="pl-c1">260</span>, options [nop,nop,TS val <span class="pl-c1">838041924</span> ecr <span class="pl-c1">2825976</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">12</span>:<span class="pl-c1">16</span>:<span class="pl-c1">15.850828</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.43354</span>: Flags [P.], seq <span class="pl-c1">147</span>:<span class="pl-c1">324</span>, ack <span class="pl-c1">815</span>, win <span class="pl-c1">260</span>, options [nop,nop,TS val <span class="pl-c1">838041924</span> ecr <span class="pl-c1">2825976</span>], length <span class="pl-c1">177</span>
+<span class="pl-c1">12</span>:<span class="pl-c1">16</span>:<span class="pl-c1">15.867947</span> IP <span class="pl-c1">61.135.152.203.43354</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [P.], seq <span class="pl-c1">815</span>:<span class="pl-c1">922</span>, ack <span class="pl-c1">324</span>, win <span class="pl-c1">245</span>, options [nop,nop,TS val <span class="pl-c1">2825982</span> ecr <span class="pl-c1">838041924</span>], length <span class="pl-c1">107</span>
+<span class="pl-c1">12</span>:<span class="pl-c1">16</span>:<span class="pl-c1">15.868051</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.43354</span>: Flags [P.], seq <span class="pl-c1">324</span>:<span class="pl-c1">388</span>, ack <span class="pl-c1">922</span>, win <span class="pl-c1">260</span>, options [nop,nop,TS val <span class="pl-c1">838041941</span> ecr <span class="pl-c1">2825982</span>], length <span class="pl-c1">64</span>
+<span class="pl-c1">12</span>:<span class="pl-c1">16</span>:<span class="pl-c1">15.876508</span> IP <span class="pl-c1">61.135.152.203.43354</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [P.], seq <span class="pl-c1">922</span>:<span class="pl-c1">960</span>, ack <span class="pl-c1">388</span>, win <span class="pl-c1">245</span>, options [nop,nop,TS val <span class="pl-c1">2825985</span> ecr <span class="pl-c1">838041941</span>], length <span class="pl-c1">38</span>
+<span class="pl-c1">12</span>:<span class="pl-c1">16</span>:<span class="pl-c1">15.916033</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.43354</span>: Flags [.], ack <span class="pl-c1">960</span>, win <span class="pl-c1">260</span>, options [nop,nop,TS val <span class="pl-c1">838041990</span> ecr <span class="pl-c1">2825985</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">12</span>:<span class="pl-c1">16</span>:<span class="pl-c1">25.886618</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.43354</span>: Flags [P.], seq <span class="pl-c1">388</span>:<span class="pl-c1">446</span>, ack <span class="pl-c1">960</span>, win <span class="pl-c1">260</span>, options [nop,nop,TS val <span class="pl-c1">838051960</span> ecr <span class="pl-c1">2825985</span>], length <span class="pl-c1">58</span>
+<span class="pl-c1">12</span>:<span class="pl-c1">16</span>:<span class="pl-c1">25.886650</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.43354</span>: Flags [P.], seq <span class="pl-c1">446</span>:<span class="pl-c1">477</span>, ack <span class="pl-c1">960</span>, win <span class="pl-c1">260</span>, options [nop,nop,TS val <span class="pl-c1">838051960</span> ecr <span class="pl-c1">2825985</span>], length <span class="pl-c1">31</span>
+<span class="pl-c1">12</span>:<span class="pl-c1">16</span>:<span class="pl-c1">25.886693</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.43354</span>: Flags [F.], seq <span class="pl-c1">477</span>, ack <span class="pl-c1">960</span>, win <span class="pl-c1">260</span>, options [nop,nop,TS val <span class="pl-c1">838051960</span> ecr <span class="pl-c1">2825985</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">12</span>:<span class="pl-c1">16</span>:<span class="pl-c1">25.991904</span> IP <span class="pl-c1">61.135.152.203.43354</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [.], ack <span class="pl-c1">478</span>, win <span class="pl-c1">245</span>, options [nop,nop,TS val <span class="pl-c1">2829018</span> ecr <span class="pl-c1">838051960</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">12</span>:<span class="pl-c1">16</span>:<span class="pl-c1">26.628299</span> IP <span class="pl-c1">61.135.152.203.43354</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [P.], seq <span class="pl-c1">960</span>:<span class="pl-c1">991</span>, ack <span class="pl-c1">478</span>, win <span class="pl-c1">245</span>, options [nop,nop,TS val <span class="pl-c1">2829018</span> ecr <span class="pl-c1">838051960</span>], length <span class="pl-c1">31</span>
+<span class="pl-c1">12</span>:<span class="pl-c1">16</span>:<span class="pl-c1">26.628341</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.43354</span>: Flags [R], seq <span class="pl-c1">3728669998</span>, win <span class="pl-c1">0</span>, length <span class="pl-c1">0</span>
+<span class="pl-c1">12</span>:<span class="pl-c1">16</span>:<span class="pl-c1">26.628350</span> IP <span class="pl-c1">61.135.152.203.43354</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [F.], seq <span class="pl-c1">991</span>, ack <span class="pl-c1">478</span>, win <span class="pl-c1">245</span>, options [nop,nop,TS val <span class="pl-c1">2829208</span> ecr <span class="pl-c1">838051960</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">12</span>:<span class="pl-c1">16</span>:<span class="pl-c1">26.628359</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.43354</span>: Flags [R], seq <span class="pl-c1">3728669998</span>, win <span class="pl-c1">0</span>, length <span class="pl-c1">0</span></pre></div>
+
+<h1>
+<a id="http1测试抓包数据" class="anchor" href="#http1%E6%B5%8B%E8%AF%95%E6%8A%93%E5%8C%85%E6%95%B0%E6%8D%AE" aria-hidden="true"><span class="octicon octicon-link"></span></a>http1测试抓包数据:</h1>
+
+<pre><code>                                                           抓包数据[1-2]
+</code></pre>
+
+<div class="highlight highlight-source-c"><pre><span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.082143</span> IP <span class="pl-c1">61.135.152.203.39538</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [S], seq <span class="pl-c1">2008190896</span>, win <span class="pl-c1">29200</span>, options [mss <span class="pl-c1">1460</span>,sackOK,TS val <span class="pl-c1">4050680</span> ecr <span class="pl-c1">0</span>,nop,wscale <span class="pl-c1">7</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.082192</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.39538</span>: Flags [S.], seq <span class="pl-c1">3345253698</span>, ack <span class="pl-c1">2008190897</span>, win <span class="pl-c1">14480</span>, options [mss <span class="pl-c1">1460</span>,sackOK,TS val <span class="pl-c1">842124156</span> ecr <span class="pl-c1">4050680</span>,nop,wscale <span class="pl-c1">6</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.093528</span> IP <span class="pl-c1">61.135.152.203.39538</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [.], ack <span class="pl-c1">1</span>, win <span class="pl-c1">229</span>, options [nop,nop,TS val <span class="pl-c1">4050684</span> ecr <span class="pl-c1">842124156</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.095213</span> IP <span class="pl-c1">61.135.152.203.39538</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [P.], seq <span class="pl-c1">1</span>:<span class="pl-c1">167</span>, ack <span class="pl-c1">1</span>, win <span class="pl-c1">229</span>, options [nop,nop,TS val <span class="pl-c1">4050685</span> ecr <span class="pl-c1">842124156</span>], length <span class="pl-c1">166</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.095247</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.39538</span>: Flags [.], ack <span class="pl-c1">167</span>, win <span class="pl-c1">243</span>, options [nop,nop,TS val <span class="pl-c1">842124169</span> ecr <span class="pl-c1">4050685</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.097252</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.39538</span>: Flags [.], seq <span class="pl-c1">1</span>:<span class="pl-c1">2897</span>, ack <span class="pl-c1">167</span>, win <span class="pl-c1">243</span>, options [nop,nop,TS val <span class="pl-c1">842124171</span> ecr <span class="pl-c1">4050685</span>], length <span class="pl-c1">2896</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.097265</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.39538</span>: Flags [.], seq <span class="pl-c1">2897</span>:<span class="pl-c1">5793</span>, ack <span class="pl-c1">167</span>, win <span class="pl-c1">243</span>, options [nop,nop,TS val <span class="pl-c1">842124171</span> ecr <span class="pl-c1">4050685</span>], length <span class="pl-c1">2896</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.097273</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.39538</span>: Flags [P.], seq <span class="pl-c1">5793</span>:<span class="pl-c1">5835</span>, ack <span class="pl-c1">167</span>, win <span class="pl-c1">243</span>, options [nop,nop,TS val <span class="pl-c1">842124171</span> ecr <span class="pl-c1">4050685</span>], length <span class="pl-c1">42</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.108192</span> IP <span class="pl-c1">61.135.152.203.39538</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [.], ack <span class="pl-c1">1449</span>, win <span class="pl-c1">251</span>, options [nop,nop,TS val <span class="pl-c1">4050688</span> ecr <span class="pl-c1">842124171</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.108560</span> IP <span class="pl-c1">61.135.152.203.39538</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [.], ack <span class="pl-c1">2897</span>, win <span class="pl-c1">274</span>, options [nop,nop,TS val <span class="pl-c1">4050689</span> ecr <span class="pl-c1">842124171</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.109881</span> IP <span class="pl-c1">61.135.152.203.39538</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [.], ack <span class="pl-c1">4345</span>, win <span class="pl-c1">296</span>, options [nop,nop,TS val <span class="pl-c1">4050689</span> ecr <span class="pl-c1">842124171</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.112670</span> IP <span class="pl-c1">61.135.152.203.39538</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [.], ack <span class="pl-c1">5793</span>, win <span class="pl-c1">319</span>, options [nop,nop,TS val <span class="pl-c1">4050689</span> ecr <span class="pl-c1">842124171</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.112674</span> IP <span class="pl-c1">61.135.152.203.39538</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [.], ack <span class="pl-c1">5835</span>, win <span class="pl-c1">319</span>, options [nop,nop,TS val <span class="pl-c1">4050689</span> ecr <span class="pl-c1">842124171</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.124620</span> IP <span class="pl-c1">61.135.152.203.39538</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [P.], seq <span class="pl-c1">167</span>:<span class="pl-c1">293</span>, ack <span class="pl-c1">5835</span>, win <span class="pl-c1">319</span>, options [nop,nop,TS val <span class="pl-c1">4050693</span> ecr <span class="pl-c1">842124171</span>], length <span class="pl-c1">126</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.125386</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.39538</span>: Flags [P.], seq <span class="pl-c1">5835</span>:<span class="pl-c1">6077</span>, ack <span class="pl-c1">293</span>, win <span class="pl-c1">243</span>, options [nop,nop,TS val <span class="pl-c1">842124199</span> ecr <span class="pl-c1">4050693</span>], length <span class="pl-c1">242</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.146846</span> IP <span class="pl-c1">61.135.152.203.39538</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [P.], seq <span class="pl-c1">293</span>:<span class="pl-c1">451</span>, ack <span class="pl-c1">6077</span>, win <span class="pl-c1">342</span>, options [nop,nop,TS val <span class="pl-c1">4050699</span> ecr <span class="pl-c1">842124199</span>], length <span class="pl-c1">158</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.147103</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.39538</span>: Flags [P.], seq <span class="pl-c1">6077</span>:<span class="pl-c1">6351</span>, ack <span class="pl-c1">451</span>, win <span class="pl-c1">260</span>, options [nop,nop,TS val <span class="pl-c1">842124221</span> ecr <span class="pl-c1">4050699</span>], length <span class="pl-c1">274</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.165567</span> IP <span class="pl-c1">61.135.152.203.39540</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [S], seq <span class="pl-c1">219946969</span>, win <span class="pl-c1">29200</span>, options [mss <span class="pl-c1">1460</span>,sackOK,TS val <span class="pl-c1">4050705</span> ecr <span class="pl-c1">0</span>,nop,wscale <span class="pl-c1">7</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.165602</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.39540</span>: Flags [S.], seq <span class="pl-c1">486067254</span>, ack <span class="pl-c1">219946970</span>, win <span class="pl-c1">14480</span>, options [mss <span class="pl-c1">1460</span>,sackOK,TS val <span class="pl-c1">842124239</span> ecr <span class="pl-c1">4050705</span>,nop,wscale <span class="pl-c1">6</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.179555</span> IP <span class="pl-c1">61.135.152.203.39540</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [.], ack <span class="pl-c1">1</span>, win <span class="pl-c1">229</span>, options [nop,nop,TS val <span class="pl-c1">4050710</span> ecr <span class="pl-c1">842124239</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.183886</span> IP <span class="pl-c1">61.135.152.203.39540</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [P.], seq <span class="pl-c1">1</span>:<span class="pl-c1">518</span>, ack <span class="pl-c1">1</span>, win <span class="pl-c1">229</span>, options [nop,nop,TS val <span class="pl-c1">4050710</span> ecr <span class="pl-c1">842124239</span>], length <span class="pl-c1">517</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.183919</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.39540</span>: Flags [.], ack <span class="pl-c1">518</span>, win <span class="pl-c1">243</span>, options [nop,nop,TS val <span class="pl-c1">842124257</span> ecr <span class="pl-c1">4050710</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.184234</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.39540</span>: Flags [P.], seq <span class="pl-c1">1</span>:<span class="pl-c1">153</span>, ack <span class="pl-c1">518</span>, win <span class="pl-c1">243</span>, options [nop,nop,TS val <span class="pl-c1">842124258</span> ecr <span class="pl-c1">4050710</span>], length <span class="pl-c1">152</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.197782</span> IP <span class="pl-c1">61.135.152.203.39540</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [.], ack <span class="pl-c1">153</span>, win <span class="pl-c1">237</span>, options [nop,nop,TS val <span class="pl-c1">4050715</span> ecr <span class="pl-c1">842124258</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.199941</span> IP <span class="pl-c1">61.135.152.203.39538</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [.], ack <span class="pl-c1">6351</span>, win <span class="pl-c1">364</span>, options [nop,nop,TS val <span class="pl-c1">4050716</span> ecr <span class="pl-c1">842124221</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.200099</span> IP <span class="pl-c1">61.135.152.203.39540</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [P.], seq <span class="pl-c1">518</span>:<span class="pl-c1">569</span>, ack <span class="pl-c1">153</span>, win <span class="pl-c1">237</span>, options [nop,nop,TS val <span class="pl-c1">4050716</span> ecr <span class="pl-c1">842124258</span>], length <span class="pl-c1">51</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.240041</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.39540</span>: Flags [.], ack <span class="pl-c1">569</span>, win <span class="pl-c1">243</span>, options [nop,nop,TS val <span class="pl-c1">842124314</span> ecr <span class="pl-c1">4050716</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.249641</span> IP <span class="pl-c1">61.135.152.203.39540</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [P.], seq <span class="pl-c1">569</span>:<span class="pl-c1">727</span>, ack <span class="pl-c1">153</span>, win <span class="pl-c1">237</span>, options [nop,nop,TS val <span class="pl-c1">4050731</span> ecr <span class="pl-c1">842124314</span>], length <span class="pl-c1">158</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.249662</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.39540</span>: Flags [.], ack <span class="pl-c1">727</span>, win <span class="pl-c1">260</span>, options [nop,nop,TS val <span class="pl-c1">842124323</span> ecr <span class="pl-c1">4050731</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.249833</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.39540</span>: Flags [P.], seq <span class="pl-c1">153</span>:<span class="pl-c1">427</span>, ack <span class="pl-c1">727</span>, win <span class="pl-c1">260</span>, options [nop,nop,TS val <span class="pl-c1">842124323</span> ecr <span class="pl-c1">4050731</span>], length <span class="pl-c1">274</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">18.296431</span> IP <span class="pl-c1">61.135.152.203.39540</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [.], ack <span class="pl-c1">427</span>, win <span class="pl-c1">245</span>, options [nop,nop,TS val <span class="pl-c1">4050745</span> ecr <span class="pl-c1">842124323</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">28.152336</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.39538</span>: Flags [P.], seq <span class="pl-c1">6351</span>:<span class="pl-c1">6382</span>, ack <span class="pl-c1">451</span>, win <span class="pl-c1">260</span>, options [nop,nop,TS val <span class="pl-c1">842134226</span> ecr <span class="pl-c1">4050716</span>], length <span class="pl-c1">31</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">28.152394</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.39538</span>: Flags [F.], seq <span class="pl-c1">6382</span>, ack <span class="pl-c1">451</span>, win <span class="pl-c1">260</span>, options [nop,nop,TS val <span class="pl-c1">842134226</span> ecr <span class="pl-c1">4050716</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">28.169623</span> IP <span class="pl-c1">61.135.152.203.39538</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [.], ack <span class="pl-c1">6382</span>, win <span class="pl-c1">364</span>, options [nop,nop,TS val <span class="pl-c1">4053706</span> ecr <span class="pl-c1">842134226</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">28.208922</span> IP <span class="pl-c1">61.135.152.203.39538</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [.], ack <span class="pl-c1">6383</span>, win <span class="pl-c1">364</span>, options [nop,nop,TS val <span class="pl-c1">4053719</span> ecr <span class="pl-c1">842134226</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">28.249534</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.39540</span>: Flags [P.], seq <span class="pl-c1">427</span>:<span class="pl-c1">458</span>, ack <span class="pl-c1">727</span>, win <span class="pl-c1">260</span>, options [nop,nop,TS val <span class="pl-c1">842134323</span> ecr <span class="pl-c1">4050745</span>], length <span class="pl-c1">31</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">28.249599</span> IP <span class="pl-c1">123.57.90.40</span>.tproxy &gt; <span class="pl-c1">61.135.152.203.39540</span>: Flags [F.], seq <span class="pl-c1">458</span>, ack <span class="pl-c1">727</span>, win <span class="pl-c1">260</span>, options [nop,nop,TS val <span class="pl-c1">842134323</span> ecr <span class="pl-c1">4050745</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">28.271136</span> IP <span class="pl-c1">61.135.152.203.39540</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [.], ack <span class="pl-c1">458</span>, win <span class="pl-c1">245</span>, options [nop,nop,TS val <span class="pl-c1">4053736</span> ecr <span class="pl-c1">842134323</span>], length <span class="pl-c1">0</span>
+<span class="pl-c1">13</span>:<span class="pl-c1">24</span>:<span class="pl-c1">28.309786</span> IP <span class="pl-c1">61.135.152.203.39540</span> &gt; <span class="pl-c1">123.57.90.40</span>.tproxy: Flags [.], ack <span class="pl-c1">459</span>, win <span class="pl-c1">245</span>, options [nop,nop,TS val <span class="pl-c1">4053749</span> ecr <span class="pl-c1">842134323</span>], length <span class="pl-c1">0</span></pre></div>
+
+<h1>
+<a id="欢迎一起交流学习-" class="anchor" href="#%E6%AC%A2%E8%BF%8E%E4%B8%80%E8%B5%B7%E4%BA%A4%E6%B5%81%E5%AD%A6%E4%B9%A0-" aria-hidden="true"><span class="octicon octicon-link"></span></a>欢迎一起交流学习 </h1>
+
+<p>在使用中有任何问题，欢迎反馈给我，可以用以下联系方式跟我交流</p>
+
+<ul>
+<li>邮件(1031379296#qq.com, 把#换成@)</li>
+<li>QQ: 1031379296</li>
+<li>weibo: <a href="http://weibo.com/u/2786211992/home">@王发康</a>
+</li>
+</ul>
+
+<h1>
+<a id="thx" class="anchor" href="#thx" aria-hidden="true"><span class="octicon octicon-link"></span></a>Thx</h1>
+
+<ul>
+<li>chunshengsterATgmail.com</li>
+</ul>
+
+<h1>
+<a id="author" class="anchor" href="#author" aria-hidden="true"><span class="octicon octicon-link"></span></a>Author</h1>
+
+<ul>
+<li>Linux\nginx\golang\c\c++爱好者</li>
+<li>欢迎一起交流  一起学习# </li>
+<li>Others say good and Others good</li>
+</ul>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		          <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker(" http2 simple analysis 链路复用");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
